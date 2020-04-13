@@ -7,7 +7,8 @@
                  [ring/ring-defaults "0.3.2"]
                  [seancorfield/next.jdbc "1.0.424"]
                  [mysql/mysql-connector-java "8.0.19"]
-                 [clj-liquibase "0.6.0"]]
+                 [clj-liquibase "0.6.0"]
+                 [lynxeyes/dotenv "1.0.2"]]
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler clip-quiz-api.handler/app}
   :profiles
