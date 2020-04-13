@@ -1,7 +1,7 @@
 (ns clip-quiz-api.handler-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [ring.mock.request :as mock]
-            [clip-quiz-api.handler :refer :all]))
+            [clip-quiz-api.handler :refer [app]]))
 
 (deftest test-app
   (testing "main route"
