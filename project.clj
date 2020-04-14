@@ -9,9 +9,16 @@
                  [com.stuartsierra/component "1.0.0"]
                  [seancorfield/next.jdbc "1.0.424"]
                  [mysql/mysql-connector-java "8.0.19"]
-                 [clj-liquibase "0.6.0"]]
+                 [clj-liquibase "0.6.0"]
+
+                 ;; Logging
+                 [org.clojure/tools.logging "1.0.0"]
+                 [org.slf4j/slf4j-api "1.7.30"]
+                 [ch.qos.logback/logback-core "1.2.3"]
+                 [ch.qos.logback/logback-classic "1.2.3"]]
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler clip-quiz-api.handler/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                        [ring/ring-mock "0.3.2"]]}})
+                        [ring/ring-mock "0.3.2"]]}}
+  :jvm-opts ["-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"])
