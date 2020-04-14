@@ -1,5 +1,7 @@
 # clip-quiz-api
 
+![Clojure CI](https://github.com/tkindy/clip-quiz-api/workflows/Clojure%20CI/badge.svg)
+
 FIXME
 
 ## Prerequisites
