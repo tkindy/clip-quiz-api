@@ -2,8 +2,6 @@
 
 ![Clojure CI](https://github.com/tkindy/clip-quiz-api/workflows/Clojure%20CI/badge.svg)
 
-FIXME
-
 ## Prerequisites
 
 You will need [Leiningen][] 2.0.0 or above installed.
@@ -18,4 +16,4 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2020 FIXME
+Copyright © 2020 Tyler Kindy
