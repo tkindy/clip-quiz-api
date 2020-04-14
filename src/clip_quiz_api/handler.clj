@@ -3,9 +3,15 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
-(defroutes app-routes
+(defroutes routes
   (GET "/" [] "Hello World")
   (route/not-found "Not Found"))
 
-(def app
-  (wrap-defaults app-routes site-defaults))
+(defn wrap-app-component [f app]
+  (fn [req]
+    (f (assoc req ::app app))))
+
+(defn make-handler [app]
+  (-> routes
+      (wrap-app-component app)
+      (wrap-defaults site-defaults)))
