@@ -14,6 +14,5 @@
 (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable stop))
 
 (defn -main []
-  (alter-var-root #'system
-                  (comp component/start-system
-                        (fn [_] (system/system)))))
+  (let [start (comp component/start-system (fn [_] (system/system)))]
+    (alter-var-root #'system start)))
