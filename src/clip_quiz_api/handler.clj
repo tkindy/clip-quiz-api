@@ -2,10 +2,11 @@
   (:require [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.middleware.json :refer [wrap-json-response]]))
+            [ring.middleware.json :refer [wrap-json-response]]
+            [clip-quiz-api.app :refer [get-tables]]))
 
 (defroutes routes
-  (GET "/" {app ::app} "Hello World!")
+  (GET "/" {app ::app} {:body (map :TABLES/TABLE_NAME (get-tables app))})
   (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
   (route/not-found "Not Found"))
 
