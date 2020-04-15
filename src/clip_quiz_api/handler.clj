@@ -1,10 +1,12 @@
 (ns clip-quiz-api.handler
   (:require [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.json :refer [wrap-json-response]]))
 
 (defroutes routes
-  (GET "/" [] "Hello World")
+  (GET "/" {app ::app} "Hello World!")
+  (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
   (route/not-found "Not Found"))
 
 (defn wrap-app-component [f app]
@@ -14,4 +16,5 @@
 (defn make-handler [app]
   (-> routes
       (wrap-app-component app)
+      (wrap-json-response)
       (wrap-defaults site-defaults)))
