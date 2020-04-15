@@ -3,3 +3,7 @@
 
 (defrecord Rooms [db]
   component/Lifecycle)
+
+(def rooms []
+  (component/using (map->Rooms {})
+                   [:db]))
