@@ -8,7 +8,9 @@
 (defrecord DB [ds]
   component/Lifecycle
   (start [this]
-    (let [db-url (replace-first (env :DATABASE_URL) "postgres://" "postgresql://")]
+    (let [db-url (as-> (env :DATABASE_URL) url
+                   (replace-first url "postgres://" "postgresql://")
+                   (str "jdbc:" url))]
       (assoc this :ds (jdbc/get-datasource db-url))))
 
   (stop [this] this))
