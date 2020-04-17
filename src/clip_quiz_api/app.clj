@@ -1,6 +1,6 @@
 (ns clip-quiz-api.app
   (:require [com.stuartsierra.component :as component]
-            [clip-quiz-api.db :refer [db test-query]]
+            [clip-quiz-api.db :refer [test-query]]
             [clojure.tools.logging :as log]))
 
 (defrecord App [db]
