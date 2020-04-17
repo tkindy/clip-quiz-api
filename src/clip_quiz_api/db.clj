@@ -2,20 +2,24 @@
   (:require [com.stuartsierra.component :as component]
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
-            [dotenv :refer [env]]
+            [dotenv :refer [env app-env]]
             [lambdaisland.uri :refer [uri]]
             [clojure.string :refer [replace]]))
+
+;; Setup
+
+(defn build-datasource [env-key]
+  (let [db-uri (uri (env env-key))
+        db-spec {:dbtype "postgresql" :dbname (replace (:path db-uri) "/" "")
+                 :host (:host db-uri) :port (:port db-uri)
+                 :user (:user db-uri) :password (:password db-uri)}
+        db-spec (if (= app-env "local") db-spec (assoc db-spec :sslmode "require"))]
+    (jdbc/get-datasource db-spec)))
 
 (defrecord DB [ds]
   component/Lifecycle
   (start [this]
-    (let [db-uri (uri (env :DATABASE_URL))
-          db-spec {:dbtype "postgresql" :dbname (replace (:path db-uri) "/" "")
-                   :host (:host db-uri) :port (:port db-uri)
-                   :user (:user db-uri) :password (:password db-uri)
-                   :sslmode "require"}]
-
-      (assoc this :ds (jdbc/get-datasource db-spec))))
+    (assoc this :ds (build-datasource :DATABASE_URL)))
 
   (stop [this] this))
 
