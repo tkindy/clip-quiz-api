@@ -10,7 +10,7 @@
                  [lynxeyes/dotenv "1.0.2"]
                  [com.stuartsierra/component "1.0.0"]
                  [seancorfield/next.jdbc "1.0.424"]
-                 [mysql/mysql-connector-java "8.0.19"]
+                 [org.postgresql/postgresql "42.2.11"]
                  [clj-liquibase "0.6.0"]
 
                  ;; Logging

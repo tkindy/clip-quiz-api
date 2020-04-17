@@ -19,4 +19,4 @@
 ;; Queries
 
 (defn test-query [db]
-  (sql/query (:ds db) ["SELECT * FROM information_schema.TABLES"]))
+  (sql/query (:ds db) ["SELECT * FROM information_schema.tables"]))
