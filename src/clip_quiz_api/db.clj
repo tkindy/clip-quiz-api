@@ -2,13 +2,14 @@
   (:require [com.stuartsierra.component :as component]
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
-            [dotenv :refer [env]]))
+            [dotenv :refer [env]]
+            [clojure.string :refer [replace-first]]))
 
 (defrecord DB [ds]
   component/Lifecycle
   (start [this]
-    (assoc this
-           :ds (jdbc/get-datasource (env :DATABASE_URL))))
+    (let [db-url (replace-first (env :DATABASE_URL) "postgres://" "postgresql://")]
+      (assoc this :ds (jdbc/get-datasource db-url))))
 
   (stop [this] this))
 
