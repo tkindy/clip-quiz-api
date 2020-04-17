@@ -4,6 +4,6 @@
 (defrecord Rooms [db]
   component/Lifecycle)
 
-(def rooms []
+(defn rooms []
   (component/using (map->Rooms {})
                    [:db]))

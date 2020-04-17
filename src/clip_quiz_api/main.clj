@@ -10,9 +10,8 @@
   (alter-var-root #'system component/stop-system)
   (log/info "Stopped system"))
 
-(.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable shutdown-agents))
-(.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable stop))
-
 (defn -main []
+  (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable shutdown-agents))
+  (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable stop))
   (let [start (comp component/start-system (fn [_] (system/system)))]
     (alter-var-root #'system start)))
