@@ -12,6 +12,7 @@
                  [seancorfield/next.jdbc "1.0.424"]
                  [org.postgresql/postgresql "42.2.11"]
                  [clj-liquibase "0.6.0"]
+                 [lambdaisland/uri "1.2.1"]
 
                  ;; Logging
                  [org.clojure/tools.logging "1.0.0"]

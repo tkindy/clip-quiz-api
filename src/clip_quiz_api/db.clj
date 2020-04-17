@@ -3,15 +3,19 @@
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
             [dotenv :refer [env]]
-            [clojure.string :refer [replace-first]]))
+            [lambdaisland.uri :refer [uri]]
+            [clojure.string :refer [replace]]))
 
 (defrecord DB [ds]
   component/Lifecycle
   (start [this]
-    (let [db-url (as-> (env :DATABASE_URL) url
-                   (replace-first url "postgres://" "postgresql://")
-                   (str "jdbc:" url))]
-      (assoc this :ds (jdbc/get-datasource db-url))))
+    (let [db-uri (uri (env :DATABASE_URL))
+          db-spec {:dbtype "postgresql" :dbname (replace (:path db-uri) "/" "")
+                   :host (:host db-uri) :port (:port db-uri)
+                   :user (:user db-uri) :password (:password db-uri)
+                   :sslmode "require"}]
+
+      (assoc this :ds (jdbc/get-datasource db-spec))))
 
   (stop [this] this))
 
