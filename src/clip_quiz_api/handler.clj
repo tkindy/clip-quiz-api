@@ -3,11 +3,30 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :refer [wrap-json-response]]
-            [clip-quiz-api.app :refer [get-tables]]))
+            [clip-quiz-api.app :refer [get-tables]]
+            [org.httpkit.server :refer [with-channel on-close on-receive send!]]))
+
+(def clients (atom {}))
+
+(defn ws [req]
+  (with-channel req conn
+    (swap! clients assoc conn true)
+    (println conn "connected")
+    (on-receive conn (fn [msg] (println conn ":" msg)))
+    (on-close conn (fn [status]
+                     (swap! clients dissoc conn)
+                     (println conn "disconnected. status:" status)))))
+
+(future (loop []
+          (doseq [client @clients]
+            (send! (key client) "hello!" false))
+          (Thread/sleep 5000)
+          (recur)))
 
 (defroutes routes
   (GET "/" {app ::app} {:body (map :tables/table_name (get-tables app))})
   (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
+  (GET "/push" [] ws)
   (route/not-found "Not Found"))
 
 (defn wrap-app-component [f app]
