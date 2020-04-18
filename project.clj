@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [compojure "1.6.1"]
                  [ring/ring-defaults "0.3.2"]
-                 [ring-server "0.5.0"]
+                 [http-kit "2.3.0"]
                  [ring/ring-json "0.5.0"]
                  [lynxeyes/dotenv "1.0.2"]
                  [com.stuartsierra/component "1.0.0"]
