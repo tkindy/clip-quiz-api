@@ -17,12 +17,6 @@
                      (swap! clients dissoc conn)
                      (println conn "disconnected. status:" status)))))
 
-(future (loop []
-          (doseq [client @clients]
-            (send! (key client) "hello!" false))
-          (Thread/sleep 5000)
-          (recur)))
-
 (defroutes routes
   (GET "/" {app ::app} {:body (map :tables/table_name (get-tables app))})
   (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
@@ -34,6 +28,12 @@
     (f (assoc req ::app app))))
 
 (defn make-handler [app]
+  (future (loop []
+            (doseq [client @clients]
+              (send! (key client) "hello!" false))
+            (Thread/sleep 5000)
+            (recur)))
+
   (-> routes
       (wrap-app-component app)
       (wrap-json-response)
