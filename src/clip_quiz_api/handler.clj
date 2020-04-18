@@ -28,11 +28,11 @@
     (f (assoc req ::app app))))
 
 (defn make-handler [app]
-  (future (loop []
+  (future (loop [i 0]
             (doseq [client @clients]
-              (send! (key client) "hello!" false))
+              (send! (key client) (str i) false))
             (Thread/sleep 5000)
-            (recur)))
+            (recur (+ i 1))))
 
   (-> routes
       (wrap-app-component app)
