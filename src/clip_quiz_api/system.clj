@@ -2,8 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [clip-quiz-api.app :refer [app]]
             [clip-quiz-api.server :refer [web-server]]
-            [clip-quiz-api.db :refer [db]]
-            [dotenv :refer [env]]))
+            [clip-quiz-api.db :refer [db]]))
 
 (defn system []
   (component/system-map
