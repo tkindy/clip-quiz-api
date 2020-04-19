@@ -1,5 +1,5 @@
 (ns clip-quiz-api.handler
-  (:require [compojure.core :refer [defroutes GET]]
+  (:require [compojure.core :refer [defroutes routes context GET]]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :refer [wrap-json-response]]
@@ -17,10 +17,15 @@
                      (swap! clients dissoc conn)
                      (println conn "disconnected. status:" status)))))
 
-(defroutes routes
+(defn spotify-routes []
+  (routes
+   ()))
+
+(defroutes app-routes
   (GET "/" {app ::app} {:body (map :tables/table_name (get-tables app))})
   (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
   (GET "/push" [] ws)
+  (context "/spotify" [] (spotify-routes))
   (route/not-found "Not Found"))
 
 (defn wrap-app-component [f app]
@@ -34,7 +39,7 @@
             (Thread/sleep 5000)
             (recur (+ i 1))))
 
-  (-> routes
+  (-> app-routes
       (wrap-app-component app)
       (wrap-json-response)
       (wrap-defaults site-defaults)))
