@@ -7,13 +7,13 @@
 (defrecord WebServer [port handler stop-server]
   component/Lifecycle
   (start [this]
-    (log/info "starting webserver")
-    (let [config {:port port}]
-      (assoc this
-             :stop-server (run-server (get-handler handler) config))))
+    (let [config {:port port}
+          stop-server (run-server (get-handler handler) config)]
+      (log/info "Started server")
+      (assoc this :stop-server stop-server)))
   (stop [this]
-    (log/info "stopping webserver")
     (stop-server)
+    (log/info "Stopped server")
     (assoc this :stop-server nil)))
 
 (defn web-server [& {:keys [port]}]

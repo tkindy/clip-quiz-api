@@ -1,14 +1,11 @@
 (ns clip-quiz-api.main
   (:require [com.stuartsierra.component :as component]
-            [clip-quiz-api.system :as system]
-            [clojure.tools.logging :as log]))
+            [clip-quiz-api.system :as system]))
 
 (def system)
 
 (defn stop []
-  (log/info "Stopping system...")
-  (alter-var-root #'system component/stop-system)
-  (log/info "Stopped system"))
+  (alter-var-root #'system component/stop-system))
 
 (defn -main []
   (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable shutdown-agents))

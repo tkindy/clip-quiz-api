@@ -4,13 +4,13 @@
             [next.jdbc.sql :as sql]
             [dotenv :refer [env app-env]]
             [lambdaisland.uri :refer [uri]]
-            [clojure.string :refer [replace]]))
+            [clojure.string :as s]))
 
 ;; Setup
 
 (defn build-datasource [env-key]
   (let [db-uri (uri (env env-key))
-        db-spec {:dbtype "postgresql" :dbname (replace (:path db-uri) "/" "")
+        db-spec {:dbtype "postgresql" :dbname (s/replace (:path db-uri) "/" "")
                  :host (:host db-uri) :port (:port db-uri)
                  :user (:user db-uri) :password (:password db-uri)}
         db-spec (if (= app-env "local") db-spec (assoc db-spec :sslmode "require"))]
