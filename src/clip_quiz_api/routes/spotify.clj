@@ -26,35 +26,34 @@
                           :scope required-scopes :redirect_uri redirect-uri})
 
 (defn bad-state? [state req]
-  (let [stored-state (get-in req [:cookies state-key])]
+  (let [stored-state (get-in req [:cookies state-key :value])]
     (or (nil? state) (not (= state stored-state)))))
 
 (def auth-options-base {:form-params {:redirect_uri redirect-uri :grant_type "authorization_code"}
                         :headers {"Authorization" (str "Basic " (encode-base64 (str client-id ":" client-secret)))}
-                        :accept :json
-                        :content-type :json})
+                        :accept :json :as :json})
 
 (defroutes spotify-routes
   (GET "/login" []
     (let [state (gen-state)
           redirect-query (assoc redirect-query-base :state state)]
-      (println "State:" state)
       (-> (build-url "https://accounts.spotify.com/authorize" redirect-query)
           redirect
           (set-cookie state-key state))))
 
   (GET "/callback" [code state :as req]
-    (println "Received callback")
+
     (if (bad-state? state req)
-      (do (println "Bad state")
-          (assoc (response "Invalid state") :status 400))
-      (do (println "Good state")
-          (let [auth-options (assoc-in auth-options-base [:form-params :code] code)
-                {{access-token :access_token refresh-token :refresh_token} :body }
-                (http/post "https://accounts.spotify.com/api/token" auth-options)]
-            (-> (response nil)
-                (set-cookie access-token-key access-token)
-                (set-cookie refresh-token-key refresh-token)
-                (clear-cookie state-key))))))
+
+      (assoc (response {:ok false :error "Invalid state"}) :status 400)
+
+      (let [auth-options (assoc-in auth-options-base [:form-params :code] code)
+            {{access-token :access_token refresh-token :refresh_token} :body}
+            (http/post "https://accounts.spotify.com/api/token" auth-options)]
+
+        (-> (response {:ok true})
+            (set-cookie access-token-key access-token)
+            (set-cookie refresh-token-key refresh-token)
+            (clear-cookie state-key)))))
 
   (route/not-found "Not Found"))
