@@ -42,15 +42,14 @@
           (set-cookie state-key state))))
 
   (GET "/callback" [code state :as req]
-
     (if (bad-state? state req)
-
-      (assoc (response {:ok false :error "Invalid state"}) :status 400)
+      (-> (response {:ok false :error "Invalid state"})
+          (assoc :status 400))
 
       (let [auth-options (assoc-in auth-options-base [:form-params :code] code)
             {{access-token :access_token refresh-token :refresh_token} :body}
             (http/post "https://accounts.spotify.com/api/token" auth-options)]
-
+         ; TODO: make this a redirect to the app
         (-> (response {:ok true})
             (set-cookie access-token-key access-token)
             (set-cookie refresh-token-key refresh-token)
