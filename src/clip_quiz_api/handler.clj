@@ -6,7 +6,8 @@
             [ring.middleware.cookies :refer [wrap-cookies]]
             [clip-quiz-api.app :refer [get-tables]]
             [clip-quiz-api.routes.spotify :refer [spotify-routes]]
-            [org.httpkit.server :refer [with-channel on-close on-receive send!]]))
+            [org.httpkit.server :refer [with-channel on-close on-receive send!]]
+            [com.stuartsierra.component :as component]))
 
 (def clients (atom {}))
 
@@ -30,15 +31,27 @@
   (fn [req]
     (f (assoc req ::app app))))
 
-(defn make-handler [app]
-  (future (loop [i 0]
-            (doseq [client @clients]
-              (send! (key client) (str i) false))
-            (Thread/sleep 5000)
-            (recur (+ i 1))))
+(defrecord Handler [app handler]
+  component/Lifecycle
+  (start [this]
+    (future (loop [i 0]
+              (doseq [client @clients]
+                (send! (key client) (str i) false))
+              (Thread/sleep 5000)
+              (recur (+ i 1))))
 
-  (-> app-routes
-      (wrap-app-component app)
-      wrap-json-response
-      wrap-cookies
-      (wrap-defaults site-defaults)))
+    (assoc this :handler
+           (-> app-routes
+               (wrap-app-component app)
+               wrap-json-response
+               wrap-cookies
+               (wrap-defaults site-defaults))))
+  (stop [this]
+    (assoc this :handler nil)))
+
+(defn handler []
+  (component/using (map->Handler {})
+                   [:app]))
+
+(defn get-handler [handler]
+  (:handler handler))
