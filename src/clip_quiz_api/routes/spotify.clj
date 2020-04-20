@@ -24,14 +24,13 @@
 (def redirect-uri (env :SPOTIFY_AUTH_REDIRECT_URI))
 (def redirect-query-base {:response_type "code" :client_id client-id
                           :scope required-scopes :redirect_uri redirect-uri})
+(def auth-options-base {:form-params {:redirect_uri redirect-uri :grant_type "authorization_code"}
+                        :headers {"Authorization" (str "Basic " (encode-base64 (str client-id ":" client-secret)))}
+                        :accept :json :as :json})
 
 (defn bad-state? [state req]
   (let [stored-state (get-in req [:cookies state-key :value])]
     (or (nil? state) (not (= state stored-state)))))
-
-(def auth-options-base {:form-params {:redirect_uri redirect-uri :grant_type "authorization_code"}
-                        :headers {"Authorization" (str "Basic " (encode-base64 (str client-id ":" client-secret)))}
-                        :accept :json :as :json})
 
 (defroutes spotify-routes
   (GET "/login" []
