@@ -1,5 +1,5 @@
 (ns clip-quiz-api.handler
-  (:require [compojure.core :refer [defroutes context GET]]
+  (:require [compojure.core :refer [routes context GET]]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :refer [wrap-json-response]]
@@ -20,16 +20,13 @@
                      (swap! clients dissoc conn)
                      (println conn "disconnected. status:" status)))))
 
-(defroutes app-routes
-  (GET "/" {app ::app} {:body (map :tables/table_name (get-tables app))})
-  (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
-  (GET "/push" [] ws)
-  (context "/spotify" [] spotify-routes)
-  (route/not-found "Not Found"))
-
-(defn wrap-app-component [f app]
-  (fn [req]
-    (f (assoc req ::app app))))
+(defn make-routes [app]
+  (routes
+   (GET "/" [] {:body (map :tables/table_name (get-tables app))})
+   (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
+   (GET "/push" [] ws)
+   (context "/spotify" [] spotify-routes)
+   (route/not-found "Not Found")))
 
 (defrecord Handler [app handler]
   component/Lifecycle
@@ -41,8 +38,7 @@
               (recur (+ i 1))))
 
     (assoc this :handler
-           (-> app-routes
-               (wrap-app-component app)
+           (-> (make-routes app)
                wrap-json-response
                wrap-cookies
                (wrap-defaults site-defaults))))
