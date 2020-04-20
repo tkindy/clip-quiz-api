@@ -44,14 +44,17 @@
           (set-cookie state-key state))))
 
   (GET "/callback" [code state :as req]
+    (println "Received callback")
     (if (bad-state? state req)
-      (assoc (response "Invalid state") :status 400)
-      (let [auth-options (assoc-in auth-options-base [:form-params :code] code)
-            {{access-token :access_token refresh-token :refresh_token} :body }
-            (http/post "https://accounts.spotify.com/api/token" auth-options)]
-        (-> (response nil)
-            (set-cookie access-token-key access-token)
-            (set-cookie refresh-token-key refresh-token)
-            (clear-cookie state-key)))))
+      (do (println "Bad state")
+          (assoc (response "Invalid state") :status 400))
+      (do (println "Good state")
+          (let [auth-options (assoc-in auth-options-base [:form-params :code] code)
+                {{access-token :access_token refresh-token :refresh_token} :body }
+                (http/post "https://accounts.spotify.com/api/token" auth-options)]
+            (-> (response nil)
+                (set-cookie access-token-key access-token)
+                (set-cookie refresh-token-key refresh-token)
+                (clear-cookie state-key))))))
 
   (route/not-found "Not Found"))
