@@ -5,6 +5,7 @@
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.session :refer [wrap-session]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [clip-quiz-api.app :refer [get-tables]]
             [clip-quiz-api.routes.spotify :refer [spotify-routes]]
             [clip-quiz-api.routes.players :refer [make-player-routes]]
@@ -48,6 +49,8 @@
                wrap-json-response
                (wrap-json-body {:keywords? true})
                wrap-cookies
+               (wrap-cors :access-control-allow-origin [#".*"]
+                          :access-control-allow-methods [:get :put :post :delete])
                (wrap-defaults api-defaults))))
   (stop [this]
     (assoc this :handler nil)))

@@ -7,6 +7,7 @@
                  [ring/ring-defaults "0.3.2"]
                  [http-kit "2.3.0"]
                  [ring/ring-json "0.5.0"]
+                 [ring-cors "0.1.13"]
                  [lynxeyes/dotenv "1.0.2"]
                  [com.stuartsierra/component "1.0.0"]
                  [seancorfield/next.jdbc "1.0.424"]
