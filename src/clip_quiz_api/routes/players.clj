@@ -17,5 +17,6 @@
        (if name-error
          (-> (response {:ok false :error name-error})
              (assoc :status 400))
-         (do (insert-player db name)
-             (response nil)))))))
+         (let [player (insert-player db name)]
+             (-> (response nil)
+                 (assoc :session {:player-id (:players/id player)}))))))))
