@@ -26,8 +26,10 @@
 (defn db []
   (map->DB {}))
 
-
 ;; Queries
 
 (defn test-query [db]
   (sql/query (:ds db) ["SELECT * FROM information_schema.tables"]))
+
+(defn insert-player [db name]
+  (sql/insert! (:ds db) :players {:name name}))

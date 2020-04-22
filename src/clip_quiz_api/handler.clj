@@ -1,11 +1,12 @@
 (ns clip-quiz-api.handler
   (:require [compojure.core :refer [routes context GET]]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [clip-quiz-api.app :refer [get-tables]]
             [clip-quiz-api.routes.spotify :refer [spotify-routes]]
+            [clip-quiz-api.routes.players :refer [make-player-routes]]
             [org.httpkit.server :refer [with-channel on-close on-receive send!]]
             [com.stuartsierra.component :as component]))
 
@@ -26,6 +27,7 @@
    (GET "/obj" [] {:body {:name "Tyler" :age 24 :hungry true :aliases ["Gene" "Ted"]}})
    (GET "/push" [] ws)
    (context "/spotify" [] spotify-routes)
+   (context "/players" [] (make-player-routes (:db app)))
    (route/not-found "Not Found")))
 
 (defrecord Handler [app handler]
@@ -40,8 +42,9 @@
     (assoc this :handler
            (-> (make-routes app)
                wrap-json-response
+               (wrap-json-body {:keywords? true})
                wrap-cookies
-               (wrap-defaults site-defaults))))
+               (wrap-defaults api-defaults))))
   (stop [this]
     (assoc this :handler nil)))
 
