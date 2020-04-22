@@ -4,6 +4,7 @@
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.middleware.cookies :refer [wrap-cookies]]
+            [ring.middleware.session :refer [wrap-session]]
             [clip-quiz-api.app :refer [get-tables]]
             [clip-quiz-api.routes.spotify :refer [spotify-routes]]
             [clip-quiz-api.routes.players :refer [make-player-routes]]
@@ -41,6 +42,7 @@
 
     (assoc this :handler
            (-> (make-routes app)
+               wrap-session
                wrap-json-response
                (wrap-json-body {:keywords? true})
                wrap-cookies
