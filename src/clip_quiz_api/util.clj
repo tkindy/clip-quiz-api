@@ -24,3 +24,8 @@
 ;; Base64
 (defn encode-base64 [s]
   (.encodeToString (Base64/getEncoder) (.getBytes s)))
+
+(defn build-random-string [length alphabet]
+  (let [chars (map (fn [_] (rand-nth alphabet))
+                   (range length))]
+    (apply str chars)))

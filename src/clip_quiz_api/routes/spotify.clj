@@ -2,17 +2,12 @@
   (:require [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
             [ring.util.response :refer [redirect response set-cookie]]
-            [clip-quiz-api.util :refer [build-url clear-cookie encode-base64]]
+            [clip-quiz-api.util :refer [build-url clear-cookie encode-base64 build-random-string]]
             [clj-http.client :as http]
             [dotenv :refer [env]]))
 
 (def state-len 16)
 (def state-alphabet "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-
-(defn gen-state []
-  (let [chars (map (fn [_] (rand-nth state-alphabet))
-                   (range state-len))]
-    (apply str chars)))
 
 (def required-scopes "user-modify-playback-state user-read-playback-state")
 (def state-key "spotify_auth_state")
@@ -34,7 +29,7 @@
 
 (defroutes spotify-routes
   (GET "/login" []
-    (let [state (gen-state)
+    (let [state (build-random-string state-len state-alphabet)
           redirect-query (assoc redirect-query-base :state state)]
       (-> (build-url "https://accounts.spotify.com/authorize" redirect-query)
           redirect
