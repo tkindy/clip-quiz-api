@@ -28,8 +28,26 @@
 
 ;; Queries
 
+(defn quote-ident [ident] (str "\"" ident "\""))
+(def query-opts {:table-fn quote-ident :column-fn quote-ident})
+
 (defn test-query [db]
   (sql/query (:ds db) ["SELECT * FROM information_schema.tables"]))
 
 (defn insert-player [db name]
-  (sql/insert! (:ds db) :players {:name name}))
+  (sql/insert! (:ds db) :players {:name name} query-opts))
+
+(defn insert-room [db passphrase playlist-id leader-id]
+  (sql/insert! (:ds db) :rooms
+               {:passphrase passphrase :playlistId playlist-id :leaderId leader-id}
+               query-opts))
+
+(defn enter-room [db player-id room-id]
+  (jdbc/execute-one! (:ds db) ["
+    INSERT INTO
+      \"roomPlayers\" (\"playerId\", \"roomId\")
+    VALUES
+      (?, ?)
+    ON CONFLICT (\"playerId\") DO UPDATE
+      SET \"roomId\" = ?
+  " player-id room-id room-id] query-opts))
