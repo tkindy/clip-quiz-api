@@ -8,6 +8,7 @@
             [clip-quiz-api.app :refer [get-tables]]
             [clip-quiz-api.routes.spotify :refer [spotify-routes]]
             [clip-quiz-api.routes.players :refer [make-player-routes]]
+            [clip-quiz-api.routes.rooms :refer [make-room-routes]]
             [org.httpkit.server :refer [with-channel on-close on-receive send!]]
             [com.stuartsierra.component :as component]))
 
@@ -29,6 +30,7 @@
    (GET "/push" [] ws)
    (context "/spotify" [] spotify-routes)
    (context "/players" [] (make-player-routes (:db app)))
+   (context "/rooms" [] (make-room-routes (:db app)))
    (route/not-found "Not Found")))
 
 (defrecord Handler [app handler]
